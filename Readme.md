@@ -6,4 +6,8 @@ The job market is very volatile, easily affected by multiple factors such as Tec
 ## Datasets 
 Data from multiple university employment data, government and public websites. Data will be obtained via scraping on University employment data websites. Data via API from government and public websites such as US Bureau of Labor Statistics, etc will also be obtained.
 
-
+# Group members
+Abhinav Tembulkar - 50602510 - atembulk@buffalo.edu
+Atul Pandey - 50594507 - atulpriy@buffalo.edu
+Atharva Prabhu - 50591634 - aprabhu5@buffalo.edu
+Rahul Lotlikar - 50604152 - rahulujv@buffalo.edu
