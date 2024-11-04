@@ -331,4 +331,3 @@ Employment.Work Activity.Professional Service
 Employment.Work Activity.Qualitity/Productivity Management
 Employment.Work Activity.Sales, Purchasing, Marketing
 Employment.Work Activity.Teaching
-CoursesCourseraCat
