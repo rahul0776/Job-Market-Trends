@@ -1,0 +1,17 @@
+Who/what are your favorite media sources that report on data science topics? (Select all that apply) - Selected Choice - None
+On which platforms have you begun or completed data science courses? (Select all that apply) - Selected Choice - None
+Which of the following integrated development environments (IDE's) do you use on a regular basis?  (Select all that apply) - Selected Choice - None
+Which of the following hosted notebook products do you use on a regular basis?  (Select all that apply) - Selected Choice - None
+What programming languages do you use on a regular basis? (Select all that apply) - Selected Choice - None
+What data visualization libraries or tools do you use on a regular basis?  (Select all that apply) - Selected Choice - None
+Which of the following ML algorithms do you use on a regular basis? (Select all that apply): - Selected Choice - None
+Which categories of ML tools do you use on a regular basis?  (Select all that apply) - Selected Choice - None
+Which categories of computer vision methods do you use on a regular basis?  (Select all that apply) - Selected Choice - None
+Which of the following natural language processing (NLP) methods do you use on a regular basis?  (Select all that apply) - Selected Choice - None
+Which of the following machine learning frameworks do you use on a regular basis? (Select all that apply) - Selected Choice - None
+Which of the following cloud computing platforms do you use on a regular basis? (Select all that apply) - Selected Choice - None
+Which specific cloud computing products do you use on a regular basis? (Select all that apply) - Selected Choice - None
+Which specific big data / analytics products do you use on a regular basis? (Select all that apply) - Selected Choice - None
+Which of the following machine learning products do you use on a regular basis? (Select all that apply) - Selected Choice - None
+Which automated machine learning tools (or partial AutoML tools) do you use on a regular basis?  (Select all that apply) - Selected Choice - None
+Which of the following relational database products do you use on a regular basis? (Select all that apply) - Selected Choice - None

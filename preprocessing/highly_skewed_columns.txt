@@ -1,0 +1,12 @@
+Age
+WorkType
+WorkType.1
+WorkType.2
+WorkType.3
+Currency
+MLIncorporation
+Education
+CompanySize
+PrimaryToolSelected
+RemoteFriendly
+SalaryMedian

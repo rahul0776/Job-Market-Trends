@@ -1,0 +1,9 @@
+YearlyCompensation
+Age
+Gender
+MLIncorporation
+CoursesCoursera
+MLExperienceYears
+Education
+DataScienceTeamSize
+PrimaryToolSelected
