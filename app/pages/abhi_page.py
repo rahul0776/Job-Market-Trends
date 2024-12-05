@@ -2,6 +2,7 @@ import streamlit as st
 import pickle
 import numpy as np
 import pandas as pd
+import matplotlib.pyplot as plt
 
 # Load the model
 with open('./app/model2.pkl', 'rb') as file:
@@ -19,6 +20,20 @@ def dataframe_encoder(df, labelEncoder):
             df_encode[col] = le.transform(df_encode[col])
 
         return df_encode
+
+def draw_plots(model, feature_names):
+    importances = model.feature_importances_
+    feature_importances = pd.Series(importances, index=feature_names).sort_values(ascending=False)
+    top_features = feature_importances.head(10)
+
+    # Plot feature importances
+    fig2, ax2 = plt.subplots(figsize=(6, 4))
+    top_features.plot(kind='bar')
+    plt.title("Top 3 Feature Importance in Predicting ML Experience Level")
+    plt.ylabel("Importance Score")
+    plt.xlabel("Features")
+
+    st.pyplot(fig2)
 
 
 def app():
@@ -50,6 +65,7 @@ def app():
         }
     )
 
+    feature_names = list(input_data.keys())
     print(input_data)
 
     encoded_labels = dataframe_encoder(input_data, loaded_label_encoder)
@@ -61,6 +77,7 @@ def app():
     # Prediction button
     if st.button("Predict ML Experience Level"):
         prediction = model.predict(encoded_labels)
+        print('prediction', prediction)
 
         level = prediction[0]
         level_array = [
@@ -72,3 +89,7 @@ def app():
             "Director",
         ]
         st.write(f"### Predicted ML Experience Level: {level_array[level]}")
+
+        draw_plots(model, feature_names)
+
+    
