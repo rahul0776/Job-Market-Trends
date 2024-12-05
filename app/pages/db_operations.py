@@ -1,6 +1,7 @@
 import streamlit as st
 import pandas as pd
 import os
+import time
 
 # Path to your CSV file (update this path)
 # CSV_FILE = "./app/db/imputed_decoded_dataset.csv"
@@ -92,18 +93,26 @@ def app():
         st.write("Selected Row:")
         st.write(selected_row)
 
+        st.write("Press submit button after making changes")
+
         # Create input fields for modification
         updated_data = {}
+
         for col in df.columns:
-            updated_data[col] = st.text_input(f"Modify {col}", value=str(selected_row[col]))
+            if pd.api.types.is_numeric_dtype(df[col]):
+                updated_data[col] = st.number_input(f"Modify {col}", value=float(selected_row[col]))
+            else:
+                updated_data[col] = st.text_input(f"Modify {col}", value=str(selected_row[col]))
         
         if st.button("Save Changes"):
             # Update the DataFrame
             for col in df.columns:
                 df.at[row_index, col] = updated_data[col]
-            save_data(df)
+            
+            save_data(df, CURRENT_FILE)
             st.success("Entry modified successfully!")
-            st.experimental_rerun()
+            time.sleep(1)
+            st.rerun()
 
     elif action == "Remove Entry":
         st.write("### Remove Existing Entry")
@@ -116,7 +125,8 @@ def app():
             df = df.drop(index=row_index).reset_index(drop=True)
             save_data(df, CURRENT_FILE)
             st.success("Entry removed successfully!")
-            st.rerun(scope='app')
+            time.sleep(1)
+            st.rerun()
 
 if __name__ == '__main__':
     app()
