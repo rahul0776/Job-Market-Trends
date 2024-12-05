@@ -1,24 +1,39 @@
 import streamlit as st
 import pandas as pd
+import os
 
 # Path to your CSV file (update this path)
 CSV_FILE = "./app/db/imputed_decoded_dataset.csv"
+DB_PATH = "./app/db/"
 
 # Load the CSV file into a DataFrame
 @st.cache_data
-def load_data():
-    return pd.read_csv(CSV_FILE)
+def load_data(CSV_FILE):
+    return pd.read_csv(os.path.join(DB_PATH, CSV_FILE))
 
 # Save the DataFrame back to the CSV file
 def save_data(df):
     df.to_csv(CSV_FILE, index=False)
 
+def list_files():
+    files = os.listdir(DB_PATH)
+    print(files)
+    files = [file for file in files if len(file.split('.')) == 2 and file.split('.')[1] == 'csv']
+    return files
+
 # App functionality for the database page
 def app():
     st.title("Manage Database (CSV)")
     
+    # Select db
+    st.sidebar.title("Select Databases")
+    file_list = list_files()
+    print(file_list)
+    file_chosen = st.sidebar.selectbox("Select DB", file_list)
+    print(file_chosen)
+    
     # Load the data
-    df = load_data()
+    df = load_data(file_chosen)
     
     # Show the current database
     st.write("### Current Database")
