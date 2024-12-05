@@ -5,10 +5,10 @@ import pandas as pd
 import matplotlib.pyplot as plt
 
 # Load the model
-with open('./app/model2.pkl', 'rb') as file:
+with open('./app/models/model2.pkl', 'rb') as file:
     model = pickle.load(file)
 
-with open('./app/label_encoder.pkl', 'rb') as file:
+with open('./app/models/label_encoder.pkl', 'rb') as file:
     loaded_label_encoder = pickle.load(file)
 
 
@@ -93,3 +93,5 @@ def app():
         draw_plots(model, feature_names)
 
     
+if __name__ == '__main__':
+    app()

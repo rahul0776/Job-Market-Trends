@@ -1,0 +1,106 @@
+import streamlit as st
+import pandas as pd
+
+# Path to your CSV file (update this path)
+CSV_FILE = "./app/db/imputed_decoded_dataset.csv"
+
+# Load the CSV file into a DataFrame
+@st.cache_data
+def load_data():
+    return pd.read_csv(CSV_FILE)
+
+# Save the DataFrame back to the CSV file
+def save_data(df):
+    df.to_csv(CSV_FILE, index=False)
+
+# App functionality for the database page
+def app():
+    st.title("Manage Database (CSV)")
+    
+    # Load the data
+    df = load_data()
+    
+    # Show the current database
+    st.write("### Current Database")
+    st.dataframe(df)
+
+    # Select action
+    st.sidebar.title("Actions")
+    action = st.sidebar.selectbox("Select Action", ["View", "Add Entry", "Modify Entry", "Remove Entry"])
+    
+    # st.write('Database columns')
+    # st.dataframe(df.columns)
+
+    if action == "View":
+        st.write("### View Records")
+        st.write("Use filters below to search specific records.")
+        filters = {}
+        
+        # Add filters for each column
+        for col in df.columns:
+            unique_values = ["All"] + df[col].dropna().unique().tolist()
+            filters[col] = st.selectbox(f"Filter by {col}", unique_values)
+        
+        # Filter the DataFrame
+        filtered_df = df
+        for col, value in filters.items():
+            if value != "All":
+                filtered_df = filtered_df[filtered_df[col] == value]
+        
+        # Display filtered data
+        st.write("### Filtered Results")
+        st.dataframe(filtered_df)
+
+    elif action == "Add Entry":
+        st.write("### Add New Entry")
+        new_data = {}
+        
+        # Create input fields for each column
+        for col in df.columns:
+            new_data[col] = st.text_input(f"Enter value for {col}")
+        
+        if st.button("Add Entry"):
+            # Append the new row and save
+            df = df.append(new_data, ignore_index=True)
+            save_data(df)
+            st.success("New entry added successfully!")
+            st.experimental_rerun()
+
+    elif action == "Modify Entry":
+        st.write("### Modify Existing Entry")
+        st.write("Select a record to modify.")
+        
+        # Select the row to modify
+        row_index = st.number_input("Enter row index to modify", min_value=0, max_value=len(df) - 1, step=1)
+        selected_row = df.iloc[row_index]
+        st.write("Selected Row:")
+        st.write(selected_row)
+
+        # Create input fields for modification
+        updated_data = {}
+        for col in df.columns:
+            updated_data[col] = st.text_input(f"Modify {col}", value=str(selected_row[col]))
+        
+        if st.button("Save Changes"):
+            # Update the DataFrame
+            for col in df.columns:
+                df.at[row_index, col] = updated_data[col]
+            save_data(df)
+            st.success("Entry modified successfully!")
+            st.experimental_rerun()
+
+    elif action == "Remove Entry":
+        st.write("### Remove Existing Entry")
+        st.write("Select a record to remove.")
+        
+        # Select the row to delete
+        row_index = st.number_input("Enter row index to delete", min_value=0, max_value=len(df) - 1, step=1)
+        if st.button("Remove Entry"):
+            # Remove the row and save
+            df = df.drop(index=row_index).reset_index(drop=True)
+            save_data(df)
+            st.success("Entry removed successfully!")
+            st.experimental_rerun()
+
+if __name__ == '__main__':
+    app()

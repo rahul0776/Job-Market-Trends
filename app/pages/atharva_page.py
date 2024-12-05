@@ -3,8 +3,9 @@ import pickle
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
+from sklearn.inspection import permutation_importance
 
-with open('./app/nerual_net_Atharva.sav', 'rb') as file:
+with open('./app/models/nerual_net_Atharva.sav', 'rb') as file:
     loaded_model = pickle.load(file)
 
 
@@ -137,6 +138,34 @@ def visualize_prediction(probabilities, classes):
     # plt.show()
     st.pyplot(fig)
 
+def feature_importance_analysis_nn(model, aligned_data, columns):
+    """
+    Calculate and visualize feature importance for a neural network using permutation importance.
+
+    Parameters:
+    - model: Neural network model (with a `predict` method).
+    - aligned_data (pd.DataFrame): Aligned input data (features).
+    - columns (list): List of feature names.
+
+    Returns:
+    - None: Displays a plot in the Streamlit app.
+    """
+    # Generate predictions
+    y_pred = model.predict(aligned_data)
+    
+    # Permutation importance
+    importance = permutation_importance(model, aligned_data, y_pred, n_repeats=5, random_state=42)
+    
+    # Sort importance values
+    sorted_idx = importance.importances_mean.argsort()
+    plt.figure(figsize=(10, 6))
+    plt.barh(columns[sorted_idx], importance.importances_mean[sorted_idx], alpha=0.7)
+    plt.title("Feature Importance (Permutation)")
+    plt.xlabel("Mean Importance")
+    plt.ylabel("Feature")
+    plt.gca().invert_yaxis()
+    st.pyplot(plt)
+
 
 def app():
 
@@ -175,12 +204,14 @@ def app():
     }])
 
     if st.sidebar.button("Predict"):
-            results, aligned_data = process_and_predict(input_data, loaded_model, columns, output_classes)
-            for result in results:
-                st.write(f"Predicted Salary Range: {result['Predicted Class']}")
-                st.write("Class Probabilities:")
-                st.json(result['Probabilities'])
-                visualize_prediction(result['Probabilities'], output_classes)
+        results, aligned_data = process_and_predict(input_data, loaded_model, columns, output_classes)
+        for result in results:
+            st.write(f"Predicted Salary Range: {result['Predicted Class']}")
+            visualize_prediction(result['Probabilities'], output_classes)
 
-if __name__ == "__main__":
+        aligned_data = input_data.reindex(columns=columns, fill_value=0)  # Align with columns
+        feature_importance_analysis_nn(loaded_model, aligned_data, columns) 
+
+
+if __name__ == '__main__':
     app()
