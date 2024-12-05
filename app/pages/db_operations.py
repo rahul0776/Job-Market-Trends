@@ -74,14 +74,18 @@ def app():
         
         # Create input fields for each column
         for col in df.columns:
-            new_data[col] = st.text_input(f"Enter value for {col}")
+            if pd.api.types.is_numeric_dtype(df[col]):
+                new_data[col] = st.number_input(f"Enter value for {col}")
+            else:
+                new_data[col] = st.text_input(f"Enter value for {col}")
         
         if st.button("Add Entry"):
             # Append the new row and save
             df = df.append(new_data, ignore_index=True)
             save_data(df)
             st.success("New entry added successfully!")
-            st.experimental_rerun()
+            time.sleep(1)
+            st.rerun()
 
     elif action == "Modify Entry":
         st.write("### Modify Existing Entry")
