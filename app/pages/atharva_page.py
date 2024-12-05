@@ -128,12 +128,14 @@ def visualize_prediction(probabilities, classes):
     - probabilities (dict): Dictionary of class probabilities.
     - classes (list): List of class labels.
     """
+    fig, ax = plt.subplots(figsize=(6, 4))
     plt.bar(classes, probabilities.values(), alpha=0.7)
     plt.title("Predicted Class Probabilities")
     plt.ylabel("Probability")
     plt.xlabel("Classes")
     plt.ylim(0, 1)
-    plt.show()
+    # plt.show()
+    st.pyplot(fig)
 
 
 def app():
