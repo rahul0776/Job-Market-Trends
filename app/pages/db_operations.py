@@ -3,17 +3,18 @@ import pandas as pd
 import os
 
 # Path to your CSV file (update this path)
-CSV_FILE = "./app/db/imputed_decoded_dataset.csv"
+# CSV_FILE = "./app/db/imputed_decoded_dataset.csv"
 DB_PATH = "./app/db/"
 
 # Load the CSV file into a DataFrame
-@st.cache_data
+# @st.cache_data
 def load_data(CSV_FILE):
-    return pd.read_csv(os.path.join(DB_PATH, CSV_FILE))
+    CHOSEN_FILE_PATH = os.path.join(DB_PATH, CSV_FILE)
+    return pd.read_csv(CHOSEN_FILE_PATH), CHOSEN_FILE_PATH
 
 # Save the DataFrame back to the CSV file
-def save_data(df):
-    df.to_csv(CSV_FILE, index=False)
+def save_data(df, FILE_PATH):
+    df.to_csv(FILE_PATH, index=False)
 
 def list_files():
     files = os.listdir(DB_PATH)
@@ -33,7 +34,7 @@ def app():
     print(file_chosen)
     
     # Load the data
-    df = load_data(file_chosen)
+    df, CURRENT_FILE = load_data(file_chosen)
     
     # Show the current database
     st.write("### Current Database")
@@ -113,9 +114,9 @@ def app():
         if st.button("Remove Entry"):
             # Remove the row and save
             df = df.drop(index=row_index).reset_index(drop=True)
-            save_data(df)
+            save_data(df, CURRENT_FILE)
             st.success("Entry removed successfully!")
-            st.experimental_rerun()
+            st.rerun(scope='app')
 
 if __name__ == '__main__':
     app()
