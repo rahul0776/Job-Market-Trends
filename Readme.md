@@ -16,7 +16,7 @@ Rahul Lotlikar - 50604152 - rahulujv@buffalo.edu
 ## Questions
 Abhinav Tembulkar - 50602510 -<br>
 Q1)How effective are online learning platforms in improving job market readiness compared to traditional university degrees ?<br>
-Q2)How does geographic location affect job opportunities, and should relocation be considered for career growth?
+Q2)Given an individual's educational major and other demographic factors, it is possible to predict their expected salary range or employment status.
 <br>
 Atharva Prabhu - 50591634 -<br>
 Q1) Can we figure out the probability of being satisfied with a job after pursuing a specific education major?<br>
