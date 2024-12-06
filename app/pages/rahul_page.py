@@ -6,10 +6,10 @@ import seaborn as sns
 import matplotlib.pyplot as plt
 
 # Load the trained SVR model and scaler
-with open('./app/models/svr_model.pkl', 'rb') as file:
+with open('./app/models/rahul_svr_model.pkl', 'rb') as file:
     model = pickle.load(file)
 
-with open('./app/models/scaler.pkl', 'rb') as file:
+with open('./app/models/rahul_scaler.pkl', 'rb') as file:
     scaler = pickle.load(file)
 
 # Define the column order used during training

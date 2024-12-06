@@ -5,7 +5,7 @@ import pandas as pd
 import matplotlib.pyplot as plt
 from sklearn.inspection import permutation_importance
 
-with open('./app/models/nerual_net_Atharva.sav', 'rb') as file:
+with open('./app/models/atharva_nerual_net.sav', 'rb') as file:
     loaded_model = pickle.load(file)
 
 
