@@ -107,11 +107,11 @@ def train(df):
 def app():
 
     # Streamlit app title
-    st.title("ML Experience Predictor")
+    st.markdown("## How effective are online learning platforms in improving job market readiness compared to traditional university degrees ?")
 
     # Sidebar
     st.sidebar.header("Configuration")
-    mode = st.sidebar.selectbox("Mode", ["Choose Options", "Train", "Predict", "Visualize Hypothesis 1"])
+    mode = st.sidebar.selectbox("Mode", ["Choose Options", "Train", "Predict", "Visualize Hypothesis"])
 
     if mode == "Train":
         df = pd.read_csv('./app/db/imputed_decoded_dataset.csv')
