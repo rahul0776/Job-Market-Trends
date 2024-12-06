@@ -113,18 +113,6 @@ def app():
     st.sidebar.header("Configuration")
     mode = st.sidebar.selectbox("Mode", ["Choose Options", "Train", "Predict", "Visualize Hypothesis 1"])
 
-    # User inputs
-    st.sidebar.header("Input Features")
-    education_level = st.sidebar.selectbox(
-        "Education Level", ["Master’s degree", "Bachelor’s degree", "Doctoral degree"]
-    )
-    job_role = st.sidebar.selectbox(
-        "Job Role", ["Account Executive", "Administrative Assistant", "Business Analyst"]
-    )
-    # years_of_experience = st.sidebar.slider("Years of Experience", 0, 20, 5)
-    # num_online_courses = st.sidebar.number_input("Number of Online Courses Completed", 0, 50, 5)
-    print(education_level, job_role)
-
     if mode == "Train":
         df = pd.read_csv('./app/db/imputed_decoded_dataset.csv')
         
@@ -136,7 +124,7 @@ def app():
         st.success('Model successfully trained')
         accuracy, classification_rep, conf_matrix = metrics
 
-        st.write("Accuracy")
+        st.write("Testing accuracy")
         st.write(accuracy * 100)
         st.write("Classification Report")
         st.write(classification_rep)
@@ -149,6 +137,18 @@ def app():
 
 
     elif mode == "Predict":
+        # User inputs
+        st.sidebar.header("Input Features")
+        education_level = st.sidebar.selectbox(
+            "Education Level", ["Master’s degree", "Bachelor’s degree", "Doctoral degree"]
+        )
+        job_role = st.sidebar.selectbox(
+            "Job Role", ["Account Executive", "Administrative Assistant", "Business Analyst"]
+        )
+        # years_of_experience = st.sidebar.slider("Years of Experience", 0, 20, 5)
+        # num_online_courses = st.sidebar.number_input("Number of Online Courses Completed", 0, 50, 5)
+        print(education_level, job_role)
+
         # Prepare the input data
         input_data = pd.DataFrame(
             {
@@ -188,7 +188,7 @@ def app():
             st.success('Model predicted succesfully')
 
 
-    elif mode == "Visualize Hypothesis 1":
+    elif mode == "Visualize Hypothesis":
         pass
     
 if __name__ == '__main__':

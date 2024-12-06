@@ -3,9 +3,14 @@ import pickle
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
-from sklearn.inspection import permutation_importance
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import StandardScaler, OneHotEncoder
+from tensorflow.keras.models import Sequential
+from tensorflow.keras.layers import Dense, Dropout
+from tensorflow.keras.utils import to_categorical
 
-with open('./app/models/atharva_nerual_net.sav', 'rb') as file:
+
+with open('./app/models/atharva_neural_net.sav', 'rb') as file:
     loaded_model = pickle.load(file)
 
 
@@ -80,6 +85,7 @@ columns = ['Year', 'Education.Degrees.Bachelors', 'Education.Degrees.Doctorates'
 
 output_classes =['<50,000', '50,000 - 100,000', '100,000<']
 
+
 def process_and_predict(new_data, model, columns, classes):
     """
     Process a new data point, align it to the training data structure, and randomly predict a class.
@@ -118,6 +124,7 @@ def process_and_predict(new_data, model, columns, classes):
 
     return result_list, aligned_data
 
+
 def visualize_prediction(probabilities, classes):
     """
     Visualize the class probabilities as a bar chart.
@@ -136,75 +143,126 @@ def visualize_prediction(probabilities, classes):
     st.pyplot(fig)
 
 
+def train(df):
+    df['Salary_Range'] = pd.cut(df['Salaries.Mean'], bins=[-np.inf, 50000, 100000, np.inf], labels=[0, 1, 2])   
+    X = df.drop(['Salaries.Mean', 'Salary_Range', 'Employment.Status.Employed','Employment.Status.Unemployed','Employment.Status.Not in Labor Force'], axis=1)
+    y = df['Salary_Range']
+    X = pd.get_dummies(X, drop_first=True)
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+    scaler = StandardScaler()
+    X_train = scaler.fit_transform(X_train)
+    X_test = scaler.transform(X_test)
+    y_train = to_categorical(y_train)
+    y_test = to_categorical(y_test)
+
+    model = Sequential()
+    model.add(Dense(64, input_dim=X_train.shape[1], activation='relu'))
+    model.add(Dropout(0.3))
+    model.add(Dense(32, activation='relu'))
+    model.add(Dropout(0.2))
+    model.add(Dense(16, activation='relu'))
+    model.add(Dense(y_train.shape[1], activation='softmax'))
+    model.compile(loss='categorical_crossentropy', optimizer='adam', metrics=['accuracy'])
+    
+    history = model.fit(X_train, y_train, validation_data=(X_test, y_test), epochs=150, batch_size=32)
+    loss, accuracy = model.evaluate(X_test, y_test)
+    # print(f"Test Accuracy: {accuracy}")
+
+    return model, (history, loss, accuracy)
+
 
 def app():
 
     st.title(" Expected Salary range Predictor")
 
-    st.sidebar.header("Input Features")
-    year = st.sidebar.number_input("Year", min_value=1990, max_value=2025, step=1, value=2022)
-    education_level = st.sidebar.selectbox(
-        "Education Level", ["Bachelors", "Masters", "Doctorates", "Professionals"]
-    )
+    # Sidebar
+    st.sidebar.header("Configuration")
+    mode = st.sidebar.selectbox("Mode", ["Choose Options", "Train", "Predict", "Visualize Hypothesis 1"])
 
-    employer_type = st.sidebar.selectbox(
-        "Employer Type", ["Business/Industry", "Educational Institution", "Government"]
-    )
+    if mode == "Train":
+        df = pd.read_csv('./app/db/US_graduates.csv')
+        
+        with st.spinner("Training the model... Please wait."):
+            trained_model, metrics = train(df)
+            with open('./app/models/atharva_neural_net.sav', 'wb') as file3:
+                pickle.dump(trained_model, file3)
 
-    reason_outside_field = st.sidebar.selectbox(
-        "Reason for Working Outside Field", [
-            "", "Career Change", "Family-related", "Job Location", "No Job Available", "Other"
-        ]
-    )
-
-    education_major = st.sidebar.selectbox(
-        "Education Major", [
-            "Animal Sciences", "Anthropology and Archeology", "Area and Ethnic Studies",
-            "Atmospheric Sciences and Meteorology", "Biochemistry and Biophysics",
-            "Biological Sciences", "Botany", "Chemical Engineering", "Chemistry",
-            "Civil Engineering", "Computer Science and Math", "Criminology", "Earth Sciences",
-            "Economics", "Electrical Engineering", "Environmental Science Studies",
-            "Food Sciences and Technology", "Forestry Services", "Genetics, Animal and Plant",
-            "Geography", "Geology", "History of Science", "Information Services and Systems",
-            "International Relations", "Linguistics", "Management & Administration",
-            "Mechanical Engineering", "Nutritional Science", "OTHER Agricultural Sciences",
-            "OTHER Geological Sciences", "OTHER Physical and Related Sciences", "Oceanography",
-            "Operations Research", "Other Engineering", "Pharmacology, Human and Animal",
-            "Philosophy of Science", "Physics and Astronomy", "Physiology, Human and Animal",
-            "Plant Sciences", "Political Science and Government", "Political and related sciences",
-            "Psychology", "Public Policy Studies", "Sociology", "Statistics", "Zoology, General"
-        ]
-    )
-
-    input_data = pd.DataFrame([{  # Example one-hot encoding structure
-        'Year': year,
-        'Education.Degrees.Bachelors': int(education_level == "Bachelors"),
-        'Education.Degrees.Masters': int(education_level == "Masters"),
-        'Education.Degrees.Doctorates': int(education_level == "Doctorates"),
-        'Education.Degrees.Professionals': int(education_level == "Professionals"),
-        'Employment.Employer Type.Business/Industry': int(employer_type == "Business/Industry"),
-        'Employment.Employer Type.Educational Institution': int(employer_type == "Educational Institution"),
-        'Employment.Employer Type.Government': int(employer_type == "Government"),
-        'Employment.Reason Working Outside Field.Career Change': int(reason_outside_field == "Career Change"),
-        'Employment.Reason Working Outside Field.Family-related': int(reason_outside_field == "Family-related"),
-        'Employment.Reason Working Outside Field.Job Location': int(reason_outside_field == "Job Location"),
-        'Employment.Reason Working Outside Field.No Job Available': int(reason_outside_field == "No Job Available"),
-        'Employment.Reason Working Outside Field.Other': int(reason_outside_field == "Other"),
-        **{f"Education.Major_{education_major}": 1}
-    }])
-
-    for col in columns:
-        if col.startswith("Education.Major_") and col != f"Education.Major_{education_major}":
-            input_data[col] = 0
-
-    if st.sidebar.button("Predict ", key="predict"):
-        results, aligned_data = process_and_predict(input_data, loaded_model, columns, output_classes)
-        for result in results:
-            st.write(f"Predicted Salary Range: {result['Predicted Class']}")
-            visualize_prediction(result['Probabilities'], output_classes)
-
+        st.success('Model successfully trained')
+        history, loss, accuracy = metrics
+        st.write("Testing Loss")
+        st.write(loss)
+        st.write("Testing accuracy")
+        st.write(accuracy * 100)
         
 
-        
+    elif mode == "Predict":
+        # Prediction
+        st.sidebar.header("Input Features")
+        year = st.sidebar.number_input("Year", min_value=1990, max_value=2025, step=1, value=2022)
+        education_level = st.sidebar.selectbox(
+            "Education Level", ["Bachelors", "Masters", "Doctorates", "Professionals"]
+        )
+
+        employer_type = st.sidebar.selectbox(
+            "Employer Type", ["Business/Industry", "Educational Institution", "Government"]
+        )
+
+        reason_outside_field = st.sidebar.selectbox(
+            "Reason for Working Outside Field", [
+                "", "Career Change", "Family-related", "Job Location", "No Job Available", "Other"
+            ]
+        )
+
+        education_major = st.sidebar.selectbox(
+            "Education Major", [
+                "Animal Sciences", "Anthropology and Archeology", "Area and Ethnic Studies",
+                "Atmospheric Sciences and Meteorology", "Biochemistry and Biophysics",
+                "Biological Sciences", "Botany", "Chemical Engineering", "Chemistry",
+                "Civil Engineering", "Computer Science and Math", "Criminology", "Earth Sciences",
+                "Economics", "Electrical Engineering", "Environmental Science Studies",
+                "Food Sciences and Technology", "Forestry Services", "Genetics, Animal and Plant",
+                "Geography", "Geology", "History of Science", "Information Services and Systems",
+                "International Relations", "Linguistics", "Management & Administration",
+                "Mechanical Engineering", "Nutritional Science", "OTHER Agricultural Sciences",
+                "OTHER Geological Sciences", "OTHER Physical and Related Sciences", "Oceanography",
+                "Operations Research", "Other Engineering", "Pharmacology, Human and Animal",
+                "Philosophy of Science", "Physics and Astronomy", "Physiology, Human and Animal",
+                "Plant Sciences", "Political Science and Government", "Political and related sciences",
+                "Psychology", "Public Policy Studies", "Sociology", "Statistics", "Zoology, General"
+            ]
+        )
+
+        input_data = pd.DataFrame([{  # Example one-hot encoding structure
+            'Year': year,
+            'Education.Degrees.Bachelors': int(education_level == "Bachelors"),
+            'Education.Degrees.Masters': int(education_level == "Masters"),
+            'Education.Degrees.Doctorates': int(education_level == "Doctorates"),
+            'Education.Degrees.Professionals': int(education_level == "Professionals"),
+            'Employment.Employer Type.Business/Industry': int(employer_type == "Business/Industry"),
+            'Employment.Employer Type.Educational Institution': int(employer_type == "Educational Institution"),
+            'Employment.Employer Type.Government': int(employer_type == "Government"),
+            'Employment.Reason Working Outside Field.Career Change': int(reason_outside_field == "Career Change"),
+            'Employment.Reason Working Outside Field.Family-related': int(reason_outside_field == "Family-related"),
+            'Employment.Reason Working Outside Field.Job Location': int(reason_outside_field == "Job Location"),
+            'Employment.Reason Working Outside Field.No Job Available': int(reason_outside_field == "No Job Available"),
+            'Employment.Reason Working Outside Field.Other': int(reason_outside_field == "Other"),
+            **{f"Education.Major_{education_major}": 1}
+        }])
+
+        for col in columns:
+            if col.startswith("Education.Major_") and col != f"Education.Major_{education_major}":
+                input_data[col] = 0
+
+        if st.sidebar.button("Predict ", key="predict"):
+            results, aligned_data = process_and_predict(input_data, loaded_model, columns, output_classes)
+            for result in results:
+                st.write(f"Predicted Salary Range: {result['Predicted Class']}")
+                visualize_prediction(result['Probabilities'], output_classes)
+
+
+    elif mode == "Visualize Hypothesis":
+        pass
+
+
 if __name__ == "__main__":
     app()
