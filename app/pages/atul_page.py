@@ -69,7 +69,7 @@ def app():
 
     # Sidebar
     st.sidebar.header("Configuration")
-    mode = st.sidebar.selectbox("Mode", ["Train", "Predict", "Visualize Hypothesis 1"])
+    mode = st.sidebar.selectbox("Mode", ["Choose options", "Train", "Predict", "Visualize Hypothesis 1"])
 
     if mode == "Train":
         st.header("Train Model")
