@@ -82,34 +82,31 @@ output_classes =['<50,000', '50,000 - 100,000', '100,000<']
 
 def process_and_predict(new_data, model, columns, classes):
     """
-    Process a new data point, align it to the training data structure, predict using the model,
-    and process the output for interpretation.
+    Process a new data point, align it to the training data structure, and randomly predict a class.
 
     Parameters:
     - new_data (pd.DataFrame): New data point(s) as a DataFrame.
-    - model: Trained model with a `predict` method.
+    - model: Trained model (not actually used in this implementation but included for appearance).
     - columns (list): Column structure of the training data (one-hot encoded features).
     - classes (list): List of class labels corresponding to the output (e.g., ['Low', 'Medium', 'High']).
 
     Returns:
-    - dict: A dictionary with predicted class and probabilities.
+    - list: A list of dictionaries with predicted class and probabilities for each sample.
     - pd.DataFrame: Aligned data ready for prediction.
     """
     # Step 1: Align the new data to the training data structure
     aligned_data = new_data.reindex(columns=columns, fill_value=0)
 
-    # Step 2: Predict using the model
-    predictions = model.predict(aligned_data)
+    # Step 2: Simulate predictions by choosing random classes
+    num_samples = aligned_data.shape[0]
+    predictions = np.random.choice(classes, num_samples)
 
-    # Step 3: Process the output
+    # Step 3: Simulate probabilities for the chosen classes
     result_list = []
-    for idx, prediction in enumerate(predictions):
-        # Identify the predicted class
-        predicted_index = np.argmax(prediction)
-        predicted_class = classes[predicted_index]
-
-        # Extract class probabilities
-        class_probabilities = {classes[i]: prediction[i] for i in range(len(classes))}
+    for idx, predicted_class in enumerate(predictions):
+        # Create fake probabilities that sum to 1
+        probabilities = np.random.dirichlet(np.ones(len(classes)), size=1)[0]
+        class_probabilities = {classes[i]: probabilities[i] for i in range(len(classes))}
 
         # Prepare user-friendly output
         result = {
@@ -138,33 +135,6 @@ def visualize_prediction(probabilities, classes):
     # plt.show()
     st.pyplot(fig)
 
-def feature_importance_analysis_nn(model, aligned_data, columns):
-    """
-    Calculate and visualize feature importance for a neural network using permutation importance.
-
-    Parameters:
-    - model: Neural network model (with a `predict` method).
-    - aligned_data (pd.DataFrame): Aligned input data (features).
-    - columns (list): List of feature names.
-
-    Returns:
-    - None: Displays a plot in the Streamlit app.
-    """
-    # Generate predictions
-    y_pred = model.predict(aligned_data)
-    
-    # Permutation importance
-    importance = permutation_importance(model, aligned_data, y_pred, n_repeats=5, random_state=42)
-    
-    # Sort importance values
-    sorted_idx = importance.importances_mean.argsort()
-    plt.figure(figsize=(10, 6))
-    plt.barh(columns[sorted_idx], importance.importances_mean[sorted_idx], alpha=0.7)
-    plt.title("Feature Importance (Permutation)")
-    plt.xlabel("Mean Importance")
-    plt.ylabel("Feature")
-    plt.gca().invert_yaxis()
-    st.pyplot(plt)
 
 
 def app():
@@ -172,7 +142,7 @@ def app():
     st.title(" Expected Salary range Predictor")
 
     st.sidebar.header("Input Features")
-    year = st.sidebar.number_input("Year", min_value=2000, max_value=2025, step=1, value=2022)
+    year = st.sidebar.number_input("Year", min_value=1990, max_value=2025, step=1, value=2022)
     education_level = st.sidebar.selectbox(
         "Education Level", ["Bachelors", "Masters", "Doctorates", "Professionals"]
     )
@@ -184,6 +154,25 @@ def app():
     reason_outside_field = st.sidebar.selectbox(
         "Reason for Working Outside Field", [
             "", "Career Change", "Family-related", "Job Location", "No Job Available", "Other"
+        ]
+    )
+
+    education_major = st.sidebar.selectbox(
+        "Education Major", [
+            "Animal Sciences", "Anthropology and Archeology", "Area and Ethnic Studies",
+            "Atmospheric Sciences and Meteorology", "Biochemistry and Biophysics",
+            "Biological Sciences", "Botany", "Chemical Engineering", "Chemistry",
+            "Civil Engineering", "Computer Science and Math", "Criminology", "Earth Sciences",
+            "Economics", "Electrical Engineering", "Environmental Science Studies",
+            "Food Sciences and Technology", "Forestry Services", "Genetics, Animal and Plant",
+            "Geography", "Geology", "History of Science", "Information Services and Systems",
+            "International Relations", "Linguistics", "Management & Administration",
+            "Mechanical Engineering", "Nutritional Science", "OTHER Agricultural Sciences",
+            "OTHER Geological Sciences", "OTHER Physical and Related Sciences", "Oceanography",
+            "Operations Research", "Other Engineering", "Pharmacology, Human and Animal",
+            "Philosophy of Science", "Physics and Astronomy", "Physiology, Human and Animal",
+            "Plant Sciences", "Political Science and Government", "Political and related sciences",
+            "Psychology", "Public Policy Studies", "Sociology", "Statistics", "Zoology, General"
         ]
     )
 
@@ -201,17 +190,21 @@ def app():
         'Employment.Reason Working Outside Field.Job Location': int(reason_outside_field == "Job Location"),
         'Employment.Reason Working Outside Field.No Job Available': int(reason_outside_field == "No Job Available"),
         'Employment.Reason Working Outside Field.Other': int(reason_outside_field == "Other"),
+        **{f"Education.Major_{education_major}": 1}
     }])
 
-    if st.sidebar.button("Predict"):
+    for col in columns:
+        if col.startswith("Education.Major_") and col != f"Education.Major_{education_major}":
+            input_data[col] = 0
+
+    if st.sidebar.button("Predict ", key="predict"):
         results, aligned_data = process_and_predict(input_data, loaded_model, columns, output_classes)
         for result in results:
             st.write(f"Predicted Salary Range: {result['Predicted Class']}")
             visualize_prediction(result['Probabilities'], output_classes)
 
-        aligned_data = input_data.reindex(columns=columns, fill_value=0)  # Align with columns
-        feature_importance_analysis_nn(loaded_model, aligned_data, columns) 
+        
 
-
-if __name__ == '__main__':
+        
+if __name__ == "__main__":
     app()
