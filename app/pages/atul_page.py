@@ -1,21 +1,33 @@
 import streamlit as st
 import pandas as pd
 import numpy as np
+import matplotlib.pyplot as plt
+import seaborn as sns
 import xgboost as xgb
 from sklearn.preprocessing import OrdinalEncoder
-import seaborn as sns
-import matplotlib.pyplot as plt
 
-
-# Helper Functions
+# Helper functions
 def prepare_dmatrix(X, y=None, cat_feats=None, enable_categorical=True):
+    """
+    Prepare a DMatrix or QuantileDMatrix for XGBoost.
+    """
     if y is not None:
         return xgb.QuantileDMatrix(X, y, enable_categorical=enable_categorical)
     return xgb.DMatrix(X, enable_categorical=enable_categorical)
 
 
 def encode_data(X, enc, cat_feats):
+    """
+    Encode categorical features in the dataset.
+    """
     X = X.copy()
+    # Check for missing values
+    if X[cat_feats].isnull().any().any():
+        st.write("Warning: Missing values detected in categorical features. Filling with 'unknown'.")
+    
+    # Handle missing values
+    X[cat_feats] = X[cat_feats].fillna("unknown")
+
     cat_cols = enc.transform(X[cat_feats])
     for i, name in enumerate(cat_feats):
         cat_cols[name] = pd.Categorical.from_codes(
@@ -26,7 +38,18 @@ def encode_data(X, enc, cat_feats):
 
 
 def train_model(X_train, y_train, cat_feats):
-    enc = OrdinalEncoder(handle_unknown="use_encoded_value", unknown_value=np.nan)
+    """
+    Train an XGBoost model using the QuantileDMatrix.
+    """
+    # Handle missing values in categorical features
+    X_train[cat_feats] = X_train[cat_feats].fillna("unknown")
+
+    # Handle missing or non-finite values in y_train
+    y_train = y_train.replace([np.inf, -np.inf], np.nan).dropna()
+    if y_train.isnull().any():
+        raise ValueError("y_train contains missing values. Please check and clean your target variable.")
+
+    enc = OrdinalEncoder(handle_unknown="use_encoded_value", unknown_value=-1)
     enc.set_output(transform="pandas")
     enc.fit(X_train[cat_feats])
 
@@ -34,7 +57,7 @@ def train_model(X_train, y_train, cat_feats):
     X_train_encoded = encode_data(X_train, enc, cat_feats)
     Xy_train = prepare_dmatrix(X_train_encoded, y_train, cat_feats=cat_feats)
 
-    # Train XGBoost model
+    # Train the model
     params = {"objective": "reg:squarederror", "max_depth": 6, "eta": 0.3}
     booster = xgb.train(params, Xy_train, num_boost_round=50)
 
@@ -42,36 +65,76 @@ def train_model(X_train, y_train, cat_feats):
 
 
 def predict_model(booster, enc, X, cat_feats):
+    """
+    Predict normalized salary using the trained model.
+    """
     X_encoded = encode_data(X, enc, cat_feats)
     dmatrix = prepare_dmatrix(X_encoded)
     return booster.predict(dmatrix)
 
 
+# Load dataset
+@st.cache_resource
+def load_data(filepath):
+    data = pd.read_csv('./app/db/postings_half.csv')
+    data["TeamSizeColumn"] = np.random.randint(5, 50, size=len(data))
+    return data
+
+
 # Streamlit App
 def app():
-    st.title("XGBoost with Hypothesis 1 Visualization")
+    st.title("Team Size vs. Normalized Salary Analysis (Hypothesis 1)")
 
-    # Load a demo dataset
-    n_samples = 200
-    data = pd.DataFrame(
-        {
-            "team_size": np.random.randint(1, 50, size=n_samples),
-            "normalized_salary": np.random.uniform(50_000, 120_000, size=n_samples),
-            "location": np.random.choice(["NY", "CA", "TX", "WA"], n_samples),
-            "experience_level": np.random.choice(["junior", "mid-level", "senior"], n_samples),
-        }
-    )
-    data["label"] = data["normalized_salary"] * np.random.uniform(0.8, 1.2, size=n_samples)
-
-    cat_feats = ["location", "experience_level"]
-    features = cat_feats + ["team_size"]
-    target = "label"
+    data = load_data("postings_half.csv")
+    cat_feats = ["location", "formatted_experience_level"]
+    features = ["TeamSizeColumn", "location", "formatted_experience_level"]
+    target = "normalized_salary"
 
     # Sidebar
     st.sidebar.header("Configuration")
-    mode = st.sidebar.selectbox("Mode", ["Choose options", "Train", "Predict", "Visualize Hypothesis 1"])
+    mode = st.sidebar.selectbox("Mode", ["Choose options", "Visualize Hypothesis", "Train", "Predict"])
 
-    if mode == "Train":
+    if mode == "Visualize Hypothesis":
+
+        st.header("Visualizing Hypothesis 1: Team Size vs. Normalized Salary")
+
+        st.write("### Dataset Preview")
+        st.dataframe(data.head())
+
+        # Scatter Plot
+        st.write("### Scatter Plot")
+        with st.spinner("Plotting ... Please wait."):
+            sampled_data = data.sample(n=1000, random_state=42)
+            plt.figure(figsize=(10, 6))
+            sns.scatterplot(
+                data=sampled_data,
+                x="TeamSizeColumn",
+                y="normalized_salary",
+                hue="formatted_experience_level",
+                style="location"
+            )
+            plt.title("Relationship Between Team Size and Normalized Salary")
+            plt.xlabel("Team Size")
+            plt.ylabel("Normalized Salary")
+            plt.legend(title="Experience Level and Location", bbox_to_anchor=(0.5, -0.15), loc="upper center", ncol=2)  # Legend below
+            st.pyplot(plt)
+
+            # Add explanation below the scatter plot
+            st.write("**Interpretation:** This scatter plot illustrates the relationship between team size and normalized salary. Different points represent observations, and the colors indicate experience levels while the markers represent location categories. From the plot, we observe trends such as higher normalized salaries clustering in larger teams, but variation exists based on location and experience level.")
+            
+            # Correlation Matrix
+            st.write("### Correlation Matrix")
+            corr = data[["TeamSizeColumn", "normalized_salary"]].corr()
+            plt.figure(figsize=(8, 6))
+            sns.heatmap(corr, annot=True, cmap="coolwarm")
+            plt.title("Correlation Between Variables")
+            st.pyplot(plt)
+
+            # Add explanation below the correlation matrix
+            st.write("**Interpretation:** The correlation matrix quantifies the relationship between the variables 'Team Size' and 'Normalized Salary'. A positive value indicates a direct relationship, meaning larger team sizes are associated with higher normalized salaries, while a negative value suggests an inverse relationship. The magnitude of the value shows the strength of the correlation.")
+
+
+    elif mode == "Train":
         st.header("Train Model")
         test_size = st.sidebar.slider("Test Size (%)", 10, 50, 20)
 
@@ -81,13 +144,33 @@ def app():
 
         X_train, y_train = train_data[features], train_data[target]
 
-        # Train the model
-        booster, enc = train_model(X_train, y_train, cat_feats)
+        # Handle missing values in X_train
+        X_train = X_train.fillna({
+            "TeamSizeColumn": X_train["TeamSizeColumn"].mean(),  # Fill numeric column with mean
+            "location": "unknown",  # Fill categorical column with 'unknown'
+            "formatted_experience_level": "unknown"  # Fill categorical column with 'unknown'
+        })
+
+        # Check and warn if missing values persist
+        if X_train.isnull().any().any():
+            st.error("X_train still contains missing values after attempting to fill them.")
+            return
+
+        # Handle missing values in y_train
+        y_train = y_train.replace([np.inf, -np.inf], np.nan).fillna(y_train.mean())
+        if y_train.isnull().any():
+            st.error("y_train contains missing values after attempting to fill them.")
+            return
+
+        with st.spinner("Training the model... Please wait."):
+            # Train the model
+            booster, enc = train_model(X_train, y_train, cat_feats)
 
         st.success("Model trained successfully!")
         st.session_state["booster"] = booster
         st.session_state["encoder"] = enc
         st.session_state["cat_feats"] = cat_feats
+
 
     elif mode == "Predict":
         st.header("Make Predictions")
@@ -95,15 +178,18 @@ def app():
         if "booster" not in st.session_state or "encoder" not in st.session_state:
             st.error("Train the model first!")
         else:
+            # Get trained components
             booster = st.session_state["booster"]
             enc = st.session_state["encoder"]
             cat_feats = st.session_state["cat_feats"]
 
             # Input new data
             input_data = {}
-            for feat in cat_feats:
-                input_data[feat] = st.sidebar.selectbox(f"{feat}", data[feat].unique())
-            input_data["team_size"] = st.sidebar.slider("Team Size", 1, 50, 10)
+            input_data["TeamSizeColumn"] = st.sidebar.slider("Team Size", 5, 50, 25)
+            input_data["location"] = st.sidebar.selectbox("Location", data["location"].unique())
+            input_data["formatted_experience_level"] = st.sidebar.selectbox(
+                "Experience Level", data["formatted_experience_level"].unique()
+            )
 
             input_df = pd.DataFrame([input_data])
             st.write("### Input Data")
@@ -113,33 +199,7 @@ def app():
             predictions = predict_model(booster, enc, input_df, cat_feats)
             st.write("### Predictions")
             st.write(predictions)
-
-    elif mode == "Visualize Hypothesis 1":
-        st.header("Hypothesis 1: Relationship Between Team Size and Normalized Salary")
-        st.write(
-            """
-            This visualization explores the relationship between team size and normalized salary
-            to identify potential trends. Companies with larger teams may offer competitive salaries.
-            """
-        )
-
-        # Scatter plot with regression line
-        st.write("### Scatter Plot with Regression Line")
-        plt.figure(figsize=(10, 6))
-        sns.regplot(data=data, x="team_size", y="normalized_salary")
-        plt.title("Team Size vs. Normalized Salary")
-        plt.xlabel("Team Size")
-        plt.ylabel("Normalized Salary")
-        st.pyplot(plt)
-
-        # Box plot by experience level
-        st.write("### Box Plot by Experience Level")
-        plt.figure(figsize=(10, 6))
-        sns.boxplot(data=data, x="experience_level", y="normalized_salary")
-        plt.title("Normalized Salary by Experience Level")
-        plt.xlabel("Experience Level")
-        plt.ylabel("Normalized Salary")
-        st.pyplot(plt)
+            st.success('Model Predicted successfully !')
 
 
 if __name__ == "__main__":

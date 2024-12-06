@@ -107,7 +107,7 @@ def train(df):
 def app():
 
     # Streamlit app title
-    st.markdown("## How effective are online learning platforms in improving job market readiness compared to traditional university degrees ?")
+    st.markdown("### How effective are online learning platforms in improving job market readiness compared to traditional university degrees ?")
 
     # Sidebar
     st.sidebar.header("Configuration")

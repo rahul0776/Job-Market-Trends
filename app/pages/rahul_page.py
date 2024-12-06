@@ -123,7 +123,7 @@ def train(df):
 
 def app():
     # Add the heading question
-    st.markdown("## Can we accurately predict an individual's job level within an organization based on demographic and professional characteristics such as age, experience level, and education?")
+    st.markdown("### Can we accurately predict an individual's job level within an organization based on demographic and professional characteristics such as age, experience level, and education?")
 
     # Sidebar
     st.sidebar.header("Configuration")
