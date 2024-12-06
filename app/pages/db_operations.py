@@ -81,8 +81,9 @@ def app():
         
         if st.button("Add Entry"):
             # Append the new row and save
-            df = df.append(new_data, ignore_index=True)
-            save_data(df)
+            # df = df.append(new_data, ignore_index=True)
+            df = pd.concat([df, pd.DataFrame([new_data])], ignore_index=True)
+            save_data(df, CURRENT_FILE)
             st.success("New entry added successfully!")
             time.sleep(1)
             st.rerun()
