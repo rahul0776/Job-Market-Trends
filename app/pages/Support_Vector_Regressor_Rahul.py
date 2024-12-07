@@ -129,7 +129,10 @@ def app():
     st.sidebar.header("Configuration")
     mode = st.sidebar.selectbox("Mode", ["Choose Options", "Train", "Predict"])
 
-    if mode == "Train":
+    if mode == "Choose Options":
+        st.html("<b>In this analysis, we aimed to develop a predictive model to determine an individual's job level within an organization based on key demographic and professional characteristics, including age, experience level, education, and other relevant factors. Recognizing the complexities and dynamics of career progression, we employed Support Vector Regression (SVR) as our primary modeling technique due to its robustness in handling high-dimensional data and its capability to capture non-linear relationships.</b>")
+
+    elif mode == "Train":
         df = pd.read_csv('./app/db/imputed_decoded_dataset2.csv')
         
         with st.spinner("Training the model... Please wait."):
