@@ -127,7 +127,7 @@ def app():
 
     # Sidebar
     st.sidebar.header("Configuration")
-    mode = st.sidebar.selectbox("Mode", ["Choose Options", "Train", "Predict", "Visualize Hypothesis"])
+    mode = st.sidebar.selectbox("Mode", ["Choose Options", "Train", "Predict"])
 
     if mode == "Train":
         df = pd.read_csv('./app/db/imputed_decoded_dataset2.csv')
@@ -208,9 +208,6 @@ def app():
         except Exception as e:
             st.error(f"Error scaling input data: {e}")
 
-
-    elif mode == "Visualize Hypothesis":
-        pass
 
 if __name__ == '__main__':
     app()
