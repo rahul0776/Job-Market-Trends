@@ -94,7 +94,34 @@ def app():
     st.sidebar.header("Configuration")
     mode = st.sidebar.selectbox("Mode", ["Choose options", "Visualize Hypothesis", "Train", "Predict"])
 
-    if mode == "Visualize Hypothesis":
+    if mode == "Choose options":
+        st.html("<h3>What is the relationship between a company's data science team size and normalized salary of data science roles?</h3>")
+        st.html(" \
+            Hypothesis: There is a relationship between the size of a company's data science team \
+            and the normalized salaries of data science roles. Larger teams may indicate better resource allocation and higher salaries. \
+            ")
+        st.html(" \
+            Visualizing Hypothesis 1: Team Size vs. Normalized Salary \
+            This analysis aims to explore the relationship between a company's data science team size and the normalized salary of data science \
+                 roles. The hypothesis is that companies with larger data science teams might offer higher salaries. To investigate this, we will train an XGBoost regression model to predict the normalized salary based on team size and other relevant features. \
+            The dataset preview shows various job postings, including information about the company, job title, salary range, and number of views/applications. We will use this data to build our predictive model. \
+            <br>\
+            The key steps in this analysis are: \
+            \
+            <ul>\
+                <li>Data Preprocessing: Handling missing values, encoding categorical features, and scaling numeric features to prepare the data for modeling. \
+                <li>XGBoost Regression Model: Tuning the hyperparameters of the XGBoost model to optimize its performance in predicting the normalized salary. \
+                <li>Model Evaluation: Assessing the model's accuracy, R-squared score, and other relevant metrics to understand its effectiveness in capturing the relationship between team size and salary. \
+                <li>Threshold Adjustment: Exploring the impact of adjusting the decision threshold to improve the model's ability to identify high-salary job listings, especially in the presence of class imbalance. \
+            </ul>")                                
+        st.html(" \
+            By analyzing the results of this model, we aim to provide insights into how data science team size might influence the salary levels \
+            for data science roles, which can be valuable for companies in setting competitive compensation packages and attracting top talent. \
+            This app explores this hypothesis by analyzing and predicting normalized salary trends. \
+            ")
+    
+
+    elif mode == "Visualize Hypothesis":
 
         st.header("Visualizing Hypothesis 1: Team Size vs. Normalized Salary")
 

@@ -1,5 +1,8 @@
 # Modeling Future Job Market Trends Using University Enrolment, Industry Data and other factors.
 
+### Website
+https://jobnomix.streamlit.app/
+
 ## Motivation
 The job market is very volatile, easily affected by multiple factors such as Technological advancements, industry supply and demand, and external events like War and natural catastrophes. With this project, we aim to help people make an informed decision on choosing suitable job market and pursue relevant educational foundation. 
 
