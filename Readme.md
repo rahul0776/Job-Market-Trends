@@ -33,3 +33,26 @@ Q1)How does the industry influence yearly compensation?<br>
 Q2)Can we accurately predict an individual's job level within an organization based on demographic and professional characteristics such as age, experience level, and education?
 
 Location of the code and the explanation is in the ipynb file itself 
+
+## Build Steps
+Building app steps : 
+Steps to Build and Deploy a Streamlit App with Conda
+
+1. Install Conda
+If you haven’t already, install Conda from Miniconda or Anaconda. All commands are to be run in root folder ./DIC_Project
+
+2. Set Up the Conda Environment
+    -  	Create a new Conda environment:
+            `conda create -n streamlit_env python=3.12`
+    -   Activate the environment:
+            `conda activate streamlit_env`
+    -   Install Streamlit and dependencies:
+            `pip install -r requirements.txt`
+
+3. Run the App Locally
+    -	Start the app:
+            `streamlit run app/home.py`
+    -	Open the URL provided (e.g., http://localhost:8501) in your browser.
+    -   Alternatively, you can find the deployed website on :
+            `https://jobnomix.streamlit.app/`
+
