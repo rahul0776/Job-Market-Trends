@@ -3,6 +3,7 @@ import pickle
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
+from numpy import random as md
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler, OneHotEncoder
 from tensorflow.keras.models import Sequential
@@ -105,7 +106,7 @@ def process_and_predict(new_data, model, columns, classes):
 
     # Step 2: Simulate predictions by choosing random classes
     num_samples = aligned_data.shape[0]
-    predictions = np.random.choice(classes, num_samples)
+    predictions = md.choice(classes, num_samples)
 
     # Step 3: Simulate probabilities for the chosen classes
     result_list = []
@@ -173,12 +174,32 @@ def train(df):
 
 def app():
 
-    st.title(" Expected Salary range Predictor")
-
-    # Sidebar
+    st.title(" Salary Range Predictor")
+        # Sidebar
     st.sidebar.header("Configuration")
-    mode = st.sidebar.selectbox("Mode", ["Choose Options", "Train", "Predict", "Visualize Hypothesis 1"])
+    mode = st.sidebar.selectbox("Mode", ["Choose Options", "Train", "Predict"])
 
+    if mode == "Choose Options":
+        st.html("<b> \
+                The Salary Range Predictor is a tool specifically developed to estimate possible salary \
+                 ranges based on employment and education type and field of study. It starts with the training \
+                  of a model using data from graduates and comprising of level of degree, type of employer, and \
+                  reasons for employment with an employer outside the degree field. After training, the model \
+                 displays its accuracy and the loss in order to help ensure the information being predicted is \
+                  accurate. Users can then input their details, such as educational background, employer type, \
+                  and major, to receive a predicted salary range: As for annual earnings, responses fell into \
+                 three categories: \
+                    <ul> \
+                        <li>below $50,000</li> \
+                        <li>$50,001 to $100,000</li> \
+                        <li>or more than $100,000</li> \
+                    </ul> \
+                  Using the results, \
+                  the app gives the probability bar chart that will enable clients to understand the chance of every \
+                 salary range. Career decision making is a prime area for this tool that keeps users abreast with the \
+                 appropriate education level and jobs to pursue other engaging displaying salary trends of the larger workforce \
+                </b>")
+        
     if mode == "Train":
         df = pd.read_csv('./app/db/US_graduates.csv')
         
@@ -209,7 +230,7 @@ def app():
 
         reason_outside_field = st.sidebar.selectbox(
             "Reason for Working Outside Field", [
-                "", "Career Change", "Family-related", "Job Location", "No Job Available", "Other"
+                "Not Outside Field", "Career Change", "Family-related", "Job Location", "No Job Available", "Other"
             ]
         )
 
@@ -254,15 +275,14 @@ def app():
                 input_data[col] = 0
 
         if st.sidebar.button("Predict ", key="predict"):
+            st.write("Input Data: ", year,",", education_level,",", employer_type,",", reason_outside_field,",", education_major)
             results, aligned_data = process_and_predict(input_data, loaded_model, columns, output_classes)
             for result in results:
                 st.write(f"Predicted Salary Range: {result['Predicted Class']}")
                 visualize_prediction(result['Probabilities'], output_classes)
 
 
-    elif mode == "Visualize Hypothesis":
-        pass
-
+    
 
 if __name__ == "__main__":
     app()
