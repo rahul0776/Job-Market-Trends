@@ -180,6 +180,7 @@ def app():
     mode = st.sidebar.selectbox("Mode", ["Choose Options", "Train", "Predict"])
 
     if mode == "Choose Options":
+        st.html("<h3>Is it possible to predict expected salary range or employment status based on education major and demographic factors?</h3>")
         st.html("<b> \
                 The Salary Range Predictor is a tool specifically developed to estimate possible salary \
                  ranges based on employment and education type and field of study. It starts with the training \
