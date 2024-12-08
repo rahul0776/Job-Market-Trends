@@ -18,7 +18,7 @@ Rahul Lotlikar - 50604152 - rahulujv@buffalo.edu
 ## Additional requirements for phase 2
 ### Questions
 Abhinav Tembulkar - 50602510 -<br>
-Q)How effective are online learning platforms in improving job market readiness compared to traditional university degrees ? File:50602510_algo.ipynb, From cell 4
+Q)How effective are online learning platforms in improving job market readiness compared to traditional university degrees ? File:50602510_algo.ipynb, From cell 20
 <br>
 
 Atharva Prabhu - 50591634 -<br>
