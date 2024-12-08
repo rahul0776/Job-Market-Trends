@@ -18,21 +18,20 @@ Rahul Lotlikar - 50604152 - rahulujv@buffalo.edu
 ## Additional requirements for phase 2
 ## Questions
 Abhinav Tembulkar - 50602510 -<br>
-Q1)How effective are online learning platforms in improving job market readiness compared to traditional university degrees ?<br>
-Q2)How does geographic location affect job opportunities, and should relocation be considered for career growth?
+Q)How effective are online learning platforms in improving job market readiness compared to traditional university degrees ? File:50602510_algo.ipynb, From cell 4
+<br>
+
 Atharva Prabhu - 50591634 -<br>
-Q1) Can we figure out the probability of being satisfied with a job after pursuing a specific education major?<br>
-Q2) Given an individual's educational major and other demographic factors, it is possible to predict their expected salary range or employment status? 
+Q) Given an individual's educational major and other demographic factors, it is possible to predict their expected salary range or employment status? File:50591634_phase2.ipynb, From cell 7
 <br>
 Atul Pandey - 50594507 -<br>
-Q1) What is the relationship between the size of a company's data science team and the normalized salary of data science-related roles? <br>
-Q2) Does allowing remote work impact the number of views or applications received for job listings?
-<br>
-Rahul Lotlikar - 50604152 -<br>
-Q1)How does the industry influence yearly compensation?<br>
-Q2)Can we accurately predict an individual's job level within an organization based on demographic and professional characteristics such as age, experience level, and education?
+Q) What is the relationship between the size of a company's data science team and the normalized salary of data science-related roles? File:50594507_phase2.ipynb, From Cell 2
+ <br>
 
-Location of the code and the explanation is in the ipynb file itself 
+
+Rahul Lotlikar - 50604152 -<br>
+Q)Can we accurately predict an individual's job level within an organization based on demographic and professional characteristics such as age, experience level, and education? File:50604152AlgosPhase2.ipynb. From Cell 19
+<br>
 
 ## Build Steps
 Building app steps : 
