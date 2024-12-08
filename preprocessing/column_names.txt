@@ -21,7 +21,7 @@ Currency
 CompensationType
 ZipCode
 MLIncorporation
-CoursesCoursera
+CoursesPlatform
 MLExperienceYears
 Education
 DataScienceTeamSize

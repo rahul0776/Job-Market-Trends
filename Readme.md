@@ -16,7 +16,7 @@ Atharva Prabhu - 50591634 - aprabhu5@buffalo.edu
 Rahul Lotlikar - 50604152 - rahulujv@buffalo.edu
 
 ## Additional requirements for phase 2
-## Questions
+### Questions
 Abhinav Tembulkar - 50602510 -<br>
 Q)How effective are online learning platforms in improving job market readiness compared to traditional university degrees ? File:50602510_algo.ipynb, From cell 4
 <br>
@@ -54,4 +54,41 @@ If you haven’t already, install Conda from Miniconda or Anaconda. All commands
     -	Open the URL provided (e.g., http://localhost:8501) in your browser.
     -   Alternatively, you can find the deployed website on :
             `https://jobnomix.streamlit.app/`
+
+## Folder structure
+
+This repository is organized as follows:
+
+```plaintext
+📂 app/
+   ├── 📂 db/                 # Contains database-related files
+   ├── 📂 models/             # Stores machine learning models
+   ├── 📂 pages/              # Pages with each team members deployed model 
+   └── home.py                # Main Streamlit app entry point
+
+📂 data/               # Preprocessed datasets generated after phase2 EDA
+📂 datasets/           # Raw Datasets used in the phase1
+📂 docs/               # Documentation files related to data
+
+📂 exp/
+   ├── 50602510_algo.ipynb    # Final version of phase 2 notebook for 50602510
+   └── SVRVisualization.ipynb # Final version of phase 2 notebook for 
+
+📂 preprocessing/             # Preprocessing scripts and utilities
+
+📂 src/
+   ├── 50591634_eda_new.ipynb     # Phase 1 EDA notebook
+   ├── 50591634_phase2.ipynb      # Phase 2 notebook 
+   ├── 50594507_phase2.ipynb      # Phase 2 notebook 
+   ├── 50594507_Proj1.ipynb       # Phase 1 EDA notebook
+   ├── 50602510_algo.ipynb        # Phase 2 notebook
+   ├── 50602510_eda.ipynb         # Phase 1 EDA notebook
+   ├── 50604152_eda.ipynb         # Phase 1 EDA notebook
+   └── 50604152AlgosPhase2.ipynb  # Phase 2 notebook 
+   └── DIC_common_data_notebook.ipynb  # Common notebook for shared data analysis Phase 1
+
+.gitignore                # Git ignore file for excluding unnecessary files
+requirements.txt          # Python dependencies for the project
+README.md                 # Project documentation
+```
 
