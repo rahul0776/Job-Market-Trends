@@ -16,18 +16,18 @@ Data from multiple university employment data, government and public websites. D
 ## Additional requirements for phase 2
 ### Questions
 
-Q)How effective are online learning platforms in improving job market readiness compared to traditional university degrees ? File:50602510_algo.ipynb, From cell 20
+Q)How effective are online learning platforms in improving job market readiness compared to traditional university degrees ? 
 <br>
 
-Q) Given an individual's educational major and other demographic factors, it is possible to predict their expected salary range or employment status? File:50591634_phase2.ipynb, From cell 7
+Q) Given an individual's educational major and other demographic factors, it is possible to predict their expected salary range or employment status?
 <br>
 
-Q) What is the relationship between the size of a company's data science team and the normalized salary of data science-related roles? File:50594507_phase2.ipynb, From Cell 2
+Q) What is the relationship between the size of a company's data science team and the normalized salary of data science-related roles? 
  <br>
 
 
 
-Q)Can we accurately predict an individual's job level within an organization based on demographic and professional characteristics such as age, experience level, and education? File:50604152AlgosPhase2.ipynb. From Cell 19
+Q)Can we accurately predict an individual's job level within an organization based on demographic and professional characteristics such as age, experience level, and education?
 <br>
 
 ## Build Steps
