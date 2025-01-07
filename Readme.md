@@ -67,22 +67,11 @@ This repository is organized as follows:
 📂 datasets/           # Raw Datasets used in the phase1
 📂 docs/               # Documentation files related to data
 
-📂 exp/
-   ├── 50602510_algo.ipynb    # Final version of phase 2 notebook for 50602510
-   └── SVRVisualization.ipynb # Final version of phase 2 notebook for 
+
 
 📂 preprocessing/             # Preprocessing scripts and utilities
 
-📂 src/
-   ├── 50591634_eda_new.ipynb     # Phase 1 EDA notebook
-   ├── 50591634_phase2.ipynb      # Phase 2 notebook 
-   ├── 50594507_phase2.ipynb      # Phase 2 notebook 
-   ├── 50594507_Proj1.ipynb       # Phase 1 EDA notebook
-   ├── 50602510_algo.ipynb        # Phase 2 notebook
-   ├── 50602510_eda.ipynb         # Phase 1 EDA notebook
-   ├── 50604152_eda.ipynb         # Phase 1 EDA notebook
-   └── 50604152AlgosPhase2.ipynb  # Phase 2 notebook 
-   └── DIC_common_data_notebook.ipynb  # Common notebook for shared data analysis Phase 1
+
 
 .gitignore                # Git ignore file for excluding unnecessary files
 requirements.txt          # Python dependencies for the project
