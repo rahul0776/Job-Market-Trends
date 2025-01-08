@@ -13,7 +13,7 @@ Data from multiple university employment data, government and public websites. D
 
 
 
-## Additional requirements for phase 2
+
 ### Questions
 
 Q)How effective are online learning platforms in improving job market readiness compared to traditional university degrees ? 
