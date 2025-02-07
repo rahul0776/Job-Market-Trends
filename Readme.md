@@ -19,7 +19,7 @@ Data  from multiple university employment data, government and public websites. 
 Q)How effective are online learning platforms in improving job market readiness compared to traditional university degrees ? 
 <br>
 
-Q) Given an individual's educational major and other demographic factors, it is possible to predict their expected salary range or employment status?
+Q)Given an individual's educational major and other demographic factors, it is possible to predict their expected salary range or employment status?
 <br>
 
 Q) What is the relationship between the size of a company's data science team and the normalized salary of data science-related roles? 
