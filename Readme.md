@@ -25,8 +25,6 @@ Q)Given an individual's educational major and other demographic factors, it is p
 Q) What is the relationship between the size of a company's data science team and the normalized salary of data science-related roles? 
  <br>
 
-
-
 Q)Can we accurately predict an individual's job level within an organization based on demographic and professional characteristics such as age, experience level, and education?
 <br>
 
