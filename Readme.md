@@ -31,7 +31,7 @@ Q)Can we accurately predict an individual's job level within an organization bas
 Building app steps : 
 Steps to Build and Deploy a Streamlit App with Conda
 
-1. Install Conda
+1. Install Conda 
 If you haven’t already, install Conda from Miniconda or Anaconda. All commands are to be run in root folder ./DIC_Project
 
 2. Set Up the Conda Environment
